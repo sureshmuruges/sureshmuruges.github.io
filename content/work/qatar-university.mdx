@@ -1,0 +1,33 @@
+## Overview
+
+Qatar University's web platform is a **Drupal 11** build with the deepest custom-code footprint of any project I've
+worked on: **22 custom modules**, an SDC-based component theme, and a reusable migration framework — serving academic
+programs, news, events, faculty directories, and policy repositories in English and Arabic.
+
+## Notable engineering
+
+- **Universal header resolver.** A config-entity-driven system that maps menus and configuration pages to site
+  sections and colleges via condition plugins, with per-node overrides — so dozens of college sub-sections get the
+  right navigation without content editors touching structure.
+- **Custom content entities.** A media hub built on purpose-defined entity types (`media_hub_news`,
+  `media_hub_podcast`) — owner-aware, publishable, translatable, with their own CRUD routes and bulk operations —
+  instead of overloading nodes.
+- **AI content indexer.** A high-performance JSON export API that walks nodes, paragraphs, and media (including
+  translations and revisions) into structured output for AI ingestion, with metatag resolution and caching.
+- **Migration toolkit.** ~15 reusable Migrate API source and process plugins — CSV multi-value expansion, HTML
+  extraction, link/reference building, file handling — used across nine documented content migrations (programs,
+  events, faculty, news, newsletters, policies).
+- **Enterprise SSO.** Microsoft Entra ID (Azure AD) sign-in via OpenID Connect with certificate-based client
+  assertion, plus Microsoft Graph lookups for faculty and staff directory data.
+
+## Architecture choices
+
+The build leans on modern Drupal 11 idioms: OOP `#[Hook]` attributes instead of procedural hooks, explicit service
+registration with dependency injection, paragraph-first page composition mapped to Single Directory Components
+(atoms → molecules → organisms), and Linkit-based entity linking so editor-inserted links survive URL changes.
+A Playwright browser-test suite covers logged-in editorial flows.
+
+## Stack
+
+Drupal 11.2 · PHP 8.3 · MariaDB · Bootstrap 5 + SDC theme with a webpack SCSS/JS pipeline · DDEV + Docker ·
+Azure DevOps.

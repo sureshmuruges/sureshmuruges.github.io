@@ -1,0 +1,49 @@
+## Overview
+
+Qatar Stars League is the country's top professional football competition, and [qsl.qa](https://qsl.qa) is its
+digital home: news, fixtures, results, standings, player and club profiles, predictions, galleries, and a career
+portal — in Arabic and English — plus the API backend for the league's native mobile apps.
+
+The platform runs on **Drupal 11** with a decoupled architecture: the CMS owns content and match data, and exposes
+JWT-secured REST and JSON:API endpoints consumed by the front-end and the iOS/Android apps.
+
+## What I own
+
+As lead developer I'm responsible for custom module development, third-party API integration, and the
+containerised deployment on Azure Kubernetes Service.
+
+- **Five competitions, one site.** Doha Stars League, QSL Cup, Qatar Cup, Doha Cup, and EQSL run as a single-site
+  Group module architecture rather than five installations — one codebase, one editorial workflow, competition-scoped
+  content.
+- **Custom module suite.** Thirteen custom modules cover match data (`qsl_match_module`), standings calculation
+  (`team_standing`), user predictions (`qsl_prediction`), Firebase device tokens and push (`qsl_firebase`),
+  JWT auth and app version gates (`qsl_user_module`), scheduled jobs (`qsl_cron`), and shared theming services
+  (`qsl_theming`).
+- **API layer.** Simple OAuth/JWT-secured REST and JSON:API endpoints power the decoupled front-end and mobile apps,
+  alongside SSO and Firebase push notifications.
+- **Rendering rework.** Restructured four high-traffic pages — Standings, Fixtures, Top Scorers, Archive — from
+  controller-based rendering to Views + Single Directory Components, which made them cacheable, themeable, and far
+  cheaper to maintain.
+- **Bilingual delivery.** Full Arabic RTL / English support across the custom `qsl` theme and Twig templates.
+
+## Infrastructure
+
+I handle Docker end-to-end: application images (PHP 8.3-FPM + Nginx on Ubuntu), DDEV for local development, and
+deployment to AKS via Azure Pipelines — the pipeline builds the image, swaps containers, mounts the shared media
+fileshare, and runs Drush deploy steps. Kubernetes manifests cover ingress, probes, and persistent volumes for
+staging and production.
+
+Two production incidents worth mentioning: a Cloudflare/Drupal **cache-header conflict** that served stale
+match data (resolved by reconciling edge and origin cache policies), and a **GTM/GA4 misconfiguration** that was
+silently corrupting analytics — both diagnosed from production behaviour and fixed at the config level.
+
+## Career portal
+
+[career.qsl.qa](https://career.qsl.qa) runs as a multi-site application on the same platform with its own database.
+Job managers publish openings with configurable visibility windows — each listing stays open for applications for a
+defined period, then expires automatically.
+
+## Match Center
+
+I coordinated the Match Center integration architecture with a separate Laravel-based match data API — estimating
+effort and sequencing dependencies across the Drupal, Laravel, and mobile teams.

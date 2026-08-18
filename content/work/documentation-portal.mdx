@@ -1,0 +1,20 @@
+## Overview
+
+An internal engineering knowledge base built with **MkDocs Material** — the single place where project runbooks,
+Drupal and DevOps guides, security checklists, and deployment workflows live for the team.
+
+## What's in it
+
+- Per-project documentation for the major client platforms (Qatar University, Lusail, QSL, and others):
+  multi-site setups, database sync procedures, Docker/Kubernetes configuration.
+- Engineering guides: Git workflow, macOS setup, Drupal conventions, security hardening.
+- Documentation for custom Drupal modules, including the chatbot module and the AI training-documents manager.
+
+## Delivery
+
+The site builds and deploys through **Azure Pipelines**: install MkDocs, build the static site, rsync to a dedicated
+documentation server. Docs-as-code — versioned in Git, reviewed like any other change.
+
+## Stack
+
+MkDocs + Material theme · Python · Azure Pipelines · Azure DevOps.

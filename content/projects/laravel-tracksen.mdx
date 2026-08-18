@@ -1,0 +1,144 @@
+import { TracksenArchitecture } from '@/components/architecture-diagram'
+
+## The problem
+
+Freight forwarders juggle shipment manifests, party details, tax compliance, and per-job costs across spreadsheets
+and legacy desktop software. Tracksen is my answer for a small Indian freight-forwarding operation: one web app
+that tracks **bookings** (air and sea, with MAWB/HAWB manifest data), **expenses** against those jobs in multiple
+currencies, a **party address book** that understands Indian GST compliance, and a **product catalog** keyed to HSN
+codes and GST rates.
+
+It's deliberately a business tool, not a tech demo — the interesting parts are the domain rules, not the framework.
+
+## Architecture
+
+<TracksenArchitecture />
+
+The app is a server-rendered **Laravel 11** monolith: Breeze session auth, controllers that own validation and
+business rules, Eloquent models mapped onto a legacy-style schema, and Blade views with Bootstrap 5 compiled through
+Vite. No SPA, no API layer — every page is a full render with search, sort, and pagination handled by query strings.
+
+| Layer | Choice |
+| --- | --- |
+| Framework | Laravel 11, PHP 8.2+ |
+| Auth | Laravel Breeze (session, email verification) + role field (`super_admin` / `admin` / `user`) |
+| Data | Eloquent over MySQL/SQLite; sessions, cache, and queue on the database driver |
+| Frontend | Blade + Bootstrap 5.3 + Bootstrap Icons, SASS via Vite |
+| Testing | PHPUnit feature tests (auth + profile flows) with `RefreshDatabase` |
+
+## Feature walkthrough
+
+**Bookings** are the core record — 35+ manifest fields covering shipper, consignee, origin/destination,
+MAWB/MBL and HAWB/HBL numbers, weights (gross/chargeable), CBM, vessel, and IATA details. The index page searches
+across twelve fields at once and sorts on any whitelisted column.
+
+Booking numbers are generated, not typed — a year-prefixed, zero-padded sequence derived from the last issued
+number:
+
+```php title="app/Http/Controllers/BookingController.php"
+private function generateNextBookingNo(): string
+{
+    $prefix = (string) (2026 + 1);
+
+    $lastBooking = Booking::where('BookingNo', 'like', $prefix . '%')
+        ->orderBy('BookingNo', 'desc')
+        ->first();
+
+    $nextNum = $lastBooking
+        ? ((int) substr($lastBooking->BookingNo, 4)) + 1
+        : 1;
+
+    return $prefix . str_pad($nextNum, 4, '0', STR_PAD_LEFT);
+}
+```
+
+**Addresses** encode the most interesting business rule in the app: validation forks on country. An Indian party
+must supply a complete GST-compliant address — six-digit pincode, state code, GST number — while a foreign party
+gets the statutory fallbacks Indian tax filings expect:
+
+```php title="app/Http/Controllers/AddressController.php"
+private function validateAddress(Request $request, $id = null)
+{
+    $isIndia = $request->input('Country') === 'India';
+
+    $rules = $isIndia
+        ? [
+            'CompanyName' => 'required|string|max:100',
+            'ALine1'      => 'required|string|max:100',
+            'Pincode'     => 'required|digits:6',
+            'State'       => 'required|string',
+            'GSTNo'       => 'required|string|max:16',
+            // ...
+        ]
+        : [
+            'CompanyName' => 'required|string|max:100',
+            'ALine1'      => 'nullable|string|max:60',
+            'GSTNo'       => 'nullable|string',
+            // ...
+        ];
+
+    $validated = $request->validate($rules);
+
+    if (! $isIndia) {
+        // Statutory placeholders for unregistered foreign parties
+        $validated['GSTNo']     = 'URP';
+        $validated['Pincode']   = '999999';
+        $validated['StateCode'] = '96';
+        $validated['State']     = 'OTHER THAN INDIA';
+    }
+
+    return $validated;
+}
+```
+
+**Expenses** attach costs to bookings by job number with a currency and exchange rate per line, so a job's
+profitability can be assessed across USD, QAR, and INR entries. **Products** carry HSN codes with GST/IGST/CGST/SGST
+rate splits, are editable only by `super_admin`, and export to CSV as a stream:
+
+```php title="app/Http/Controllers/ProductController.php"
+return response()->streamDownload(function () use ($products, $columns) {
+    $file = fopen('php://output', 'w');
+    fputcsv($file, $columns);
+
+    foreach ($products as $product) {
+        fputcsv($file, [
+            $product->id, $product->c_code, $product->particulars,
+            $product->hsn, $product->gst, $product->igst,
+            $product->cgst, $product->sgst,
+        ]);
+    }
+    fclose($file);
+}, 'products.csv');
+```
+
+## Tech decisions & trade-offs
+
+- **Legacy schema on purpose.** Tables use `Id` primary keys and `CreateDate`/`ModifyDate` timestamps to stay
+  compatible with an existing accounting dataset — so each model overrides Laravel's conventions rather than
+  fighting the data. The cost: nothing is "free" convention-wise, and every model carries mapping config.
+- **Strings over foreign keys.** Expenses reference bookings by `JobNo` and bookings name their parties as strings.
+  That mirrors how the business actually operates (jobs referenced by number on paper and email) and keeps imports
+  trivial — at the price of DB-level referential integrity.
+- **Server-rendered over SPA.** For a data-entry tool used by a handful of trained users, Blade + query-string
+  state ships faster, has zero API surface to secure, and works on any office machine. The trade-off is page-reload
+  UX and no mobile app path without adding an API later.
+- **Inline role checks over policies.** With three roles and one privileged resource, `role !== 'super_admin'`
+  checks were the pragmatic call — though it's the first thing I'd refactor (see below).
+
+## What I'd do differently
+
+- **Move authorization to policies/gates.** The inline role checks are duplicated across controllers; Laravel
+  policies would centralise them and make them testable.
+- **Wrap sequence generation in a transaction.** `generateNextBookingNo()` has a race window between read and
+  insert; a DB-level unique constraint plus retry (or a sequence table with `lockForUpdate`) would close it.
+- **Extract validation into FormRequest classes.** The country-conditional address rules belong in a
+  `StoreAddressRequest` with its own unit tests.
+- **Add feature tests for the domain.** Breeze's auth flows are tested; the booking/expense/address CRUD — the
+  actual business value — isn't yet.
+- **Introduce real relationships incrementally.** Backfill FKs where the data is clean, keep string references
+  where imports demand it.
+
+## Status
+
+Actively developed since early 2026 — features have landed in the order the business needed them: products, then
+bookings, then addresses, then expenses.

@@ -1,0 +1,22 @@
+## Overview
+
+A **Drupal 11** backend powering staff services for Qatar Museums — a service catalog, push-notification
+management, and mobile release tracking, all editable by non-developers through taxonomy and config forms.
+
+## What's in the build
+
+- **Dynamic service catalog.** `qm_service_management` lets administrators toggle staff services on and off through
+  a taxonomy-driven admin form, and exposes REST endpoints for the services list and per-category counts consumed by
+  the staff app.
+- **Notification management.** `qm_notification_management` integrates Firebase Cloud Messaging with a settings form
+  and scheduled/recurring delivery via Scheduler + Ultimate Cron.
+- **App version matrix.** `qm_version_management` fetches release metadata (JSON/XML) from an external repository
+  and renders a version matrix — app, platform, build, release date — with taxonomy-based "current vs. older"
+  categorisation.
+- **External-data pattern.** Rather than duplicating data into Drupal, modules pull from configured source URLs and
+  present it — Drupal stays the admin and delivery layer, not the system of record.
+
+## Stack
+
+Drupal 11.1 · PHP 8.3 · MariaDB · Gin admin theme · Firebase FCM · JWT · Google API client · DDEV + Docker ·
+Azure DevOps.

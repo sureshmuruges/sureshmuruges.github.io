@@ -1,0 +1,20 @@
+## Overview
+
+Lusail is Qatar's planned smart city, and its Drupal 11 platform ([lcsc.qa](https://lcsc.qa)) doubles as a CMS and
+the backend for the city's mobile apps. I led the project: client requirement analysis, estimation, custom theme
+and template delivery, and the custom module suite.
+
+## What's in the build
+
+- **Mobile API layer.** Custom REST resource plugins (`PageResource`, `MobileMenuResource`) return lightweight,
+  app-shaped payloads rather than generic JSON:API documents — the mobile team consumes exactly what it renders.
+- **Push notifications.** A `FirebasePushService` handles device targeting and delivery for city announcements.
+- **Social feed aggregation.** A centralized `SocialFeedsService` pulls Twitter/X, Instagram, and Facebook content
+  into one configurable feed pipeline.
+- **Chatbot integration.** Backend message routing for the city's chatbot channel.
+- **Bilingual content migration.** A dedicated CSV migration module imports news with paired English and Arabic
+  translations — repeatable for recurring editorial imports.
+
+## Stack
+
+Drupal 11.2 · PHP 8.3 · MySQL 8 · custom `lusail` theme · Webform · DDEV + Docker (Ubuntu 24.04) · Azure DevOps.

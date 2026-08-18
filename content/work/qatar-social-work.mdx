@@ -1,0 +1,27 @@
+## Overview
+
+Qatar Social Work is a **true Drupal multisite**: one codebase serving 10+ independent social-welfare organisation
+websites — Ehsan, Dreama, Shafallah, Best Buddies, Alnoor, Aman, Nama, Wifaq, BHC, and the QSW umbrella site — each
+with its own theme, database, and domain.
+
+## Architecture
+
+- **Multisite topology.** Each organisation lives in its own `sites/<org>/` directory with a dedicated database and
+  a dedicated custom theme, while sharing one Drupal 9.4 core and one custom-module suite — a fix or feature lands
+  once and every organisation gets it.
+- **Shared feature modules.** Events, volunteers, program listings, contact handling, chatbots, and push
+  notifications are common modules configured per site; domain-specific vocabularies (residency status, nationality,
+  academic degree, volunteering field) capture the sector's data needs.
+- **API-first surfaces.** JSON:API plus custom REST endpoints (albums, event counts per year/language, Firebase
+  token lifecycle) back mobile and decoupled consumers.
+- **Enterprise auth.** SAML 2.0 single sign-on across the organisations.
+
+## Infrastructure
+
+The platform runs on Azure AKS: a 3-replica deployment pulling from Azure Container Registry, a persistent volume
+with per-organisation mount paths, and an internal Azure Load Balancer exposing a dedicated service port per
+organisation. Firebase push notifications, geolocation features, and live-chat support round out the integrations.
+
+## Stack
+
+Drupal 9.4 multisite · PHP · Apache · MySQL 8 · Kubernetes on Azure AKS · SAML (miniOrange) · Firebase · JSON:API.
