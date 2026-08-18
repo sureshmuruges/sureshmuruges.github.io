@@ -27,23 +27,17 @@ export default function HomePage() {
       <section className="relative overflow-hidden">
         <div className="mesh" aria-hidden />
         <div className="mx-auto max-w-6xl px-5 pb-20 pt-24 sm:px-8 sm:pb-28 sm:pt-36">
-          <Reveal>
-            <p className="flex items-center gap-2 font-mono text-xs text-muted">
-              <MapPin size={13} className="text-accent" aria-hidden />
-              {profile.location}
-            </p>
-          </Reveal>
-          <Reveal delay={0.08}>
-            <h1 className="mt-6 max-w-4xl font-display text-5xl font-semibold leading-[1.05] tracking-tight sm:text-7xl">
-              Senior Drupal
-              <br />
-              Developer<span className="text-accent">.</span>
-            </h1>
-          </Reveal>
-          <Reveal delay={0.16}>
-            <p className="mt-8 max-w-2xl text-lg leading-relaxed text-muted">{profile.tagline}</p>
-          </Reveal>
-          <Reveal delay={0.24}>
+          <p className="rise flex items-center gap-2 font-mono text-xs text-muted">
+            <MapPin size={13} className="text-accent" aria-hidden />
+            {profile.location}
+          </p>
+          <h1 className="rise rise-1 mt-6 max-w-4xl font-display text-5xl font-semibold leading-[1.05] tracking-tight sm:text-7xl">
+            Senior Drupal
+            <br />
+            Developer<span className="text-accent">.</span>
+          </h1>
+          <p className="rise rise-2 mt-8 max-w-2xl text-lg leading-relaxed text-muted">{profile.tagline}</p>
+          <div className="rise rise-3">
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Link
                 href="/work/"
@@ -58,7 +52,7 @@ export default function HomePage() {
                 Get in touch
               </a>
             </div>
-          </Reveal>
+          </div>
         </div>
       </section>
 

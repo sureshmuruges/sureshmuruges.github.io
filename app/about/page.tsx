@@ -17,10 +17,8 @@ export default function AboutPage() {
       <section className="relative overflow-hidden">
         <div className="mesh" aria-hidden />
         <div className="mx-auto max-w-6xl px-5 pb-8 pt-20 sm:px-8 sm:pt-28">
-          <Reveal>
-            <h1 className="font-display text-4xl font-semibold tracking-tight sm:text-6xl">About</h1>
-          </Reveal>
-          <Reveal delay={0.1}>
+          <h1 className="rise font-display text-4xl font-semibold tracking-tight sm:text-6xl">About</h1>
+          <div className="rise rise-1">
             <div className="mt-8 max-w-3xl space-y-5 text-lg leading-relaxed text-muted">
               <p>{profile.summary}</p>
               <p>
@@ -30,7 +28,7 @@ export default function AboutPage() {
                 development (Claude) into the workflow for code review, debugging, and modernization.
               </p>
             </div>
-          </Reveal>
+          </div>
         </div>
       </section>
 

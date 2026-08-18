@@ -14,14 +14,14 @@ export const metadata: Metadata = {
 export default function ResumePage() {
   return (
     <div className="mx-auto max-w-4xl px-5 pb-24 pt-20 sm:px-8 sm:pt-28">
-      <Reveal>
+      <div className="rise">
         <div className="flex flex-wrap items-start justify-between gap-6">
           <div>
             <h1 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">{profile.name}</h1>
             <p className="mt-2 text-lg text-muted">{profile.title}</p>
             <p className="mt-3 font-mono text-xs text-muted">
               {profile.location} · {profile.phone} ·{' '}
-              <a href={`mailto:${profile.email}`} className="text-accent hover:underline underline-offset-4">
+              <a href={`mailto:${profile.email}`} className="text-accent underline underline-offset-4">
                 {profile.email}
               </a>
             </p>
@@ -34,14 +34,14 @@ export default function ResumePage() {
             <Download size={15} aria-hidden /> Download PDF
           </a>
         </div>
-      </Reveal>
+      </div>
 
-      <Reveal delay={0.08}>
+      <div className="rise rise-1">
         <section className="mt-14">
           <h2 className="font-mono text-xs uppercase tracking-widest text-accent">Professional Summary</h2>
           <p className="mt-4 leading-relaxed text-muted">{profile.summary}</p>
         </section>
-      </Reveal>
+      </div>
 
       <section className="mt-14">
         <h2 className="font-mono text-xs uppercase tracking-widest text-accent">Experience</h2>

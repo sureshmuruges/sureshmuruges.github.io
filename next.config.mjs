@@ -9,7 +9,8 @@ import createMDX from '@next/mdx'
 /** @type {import('rehype-pretty-code').Options} */
 const prettyCodeOptions = {
   theme: {
-    dark: 'vesper',
+    // github-dark-default keeps comment tokens above WCAG AA contrast.
+    dark: 'github-dark-default',
     light: 'github-light',
   },
   keepBackground: false,
@@ -22,6 +23,11 @@ const nextConfig = {
   trailingSlash: true,
   images: { unoptimized: true },
   pageExtensions: ['ts', 'tsx', 'mdx'],
+  experimental: {
+    // Native View Transitions on client-side navigation; the CSS
+    // @view-transition rule in globals.css covers full page loads.
+    viewTransition: true,
+  },
 }
 
 const withMDX = createMDX({

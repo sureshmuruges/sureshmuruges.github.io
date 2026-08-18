@@ -13,12 +13,12 @@ export const metadata: Metadata = {
 export default function ProjectsPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 pb-24 pt-20 sm:px-8 sm:pt-28">
-      <Reveal>
+      <div className="rise">
         <h1 className="font-display text-4xl font-semibold tracking-tight sm:text-6xl">Projects</h1>
         <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
           Personal builds — where I try ideas end-to-end without a client brief.
         </p>
-      </Reveal>
+      </div>
       <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2">
         {personalProjects.map((project, i) => (
           <Reveal key={project.slug} delay={i * 0.07} className="h-full">

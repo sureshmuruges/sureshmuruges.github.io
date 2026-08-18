@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
 
 type RevealProps = {
@@ -9,11 +10,30 @@ type RevealProps = {
   className?: string
 }
 
-/** Scroll-driven fade/rise reveal. Renders statically under prefers-reduced-motion. */
+/**
+ * Scroll-driven fade/rise reveal, progressive-enhancement style: content is
+ * fully visible in SSR HTML and at first paint (so it can never hurt LCP).
+ * After hydration, only elements still below the viewport switch into
+ * animated mode and reveal on scroll. Inert under prefers-reduced-motion.
+ */
 export function Reveal({ children, delay = 0, className }: RevealProps) {
+  const ref = useRef<HTMLDivElement>(null)
   const reduced = useReducedMotion()
+  const [animated, setAnimated] = useState(false)
 
-  if (reduced) return <div className={className}>{children}</div>
+  useEffect(() => {
+    if (reduced) return
+    const el = ref.current
+    if (el && el.getBoundingClientRect().top > window.innerHeight) setAnimated(true)
+  }, [reduced])
+
+  if (!animated) {
+    return (
+      <div ref={ref} className={className}>
+        {children}
+      </div>
+    )
+  }
 
   return (
     <motion.div
