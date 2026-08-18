@@ -1,0 +1,227 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: oklch(0.985 0.002 90);
+  --surface: oklch(0.955 0.003 90);
+  --surface-raised: oklch(1 0 0);
+  --foreground: oklch(0.21 0.01 260);
+  --muted: oklch(0.45 0.015 260);
+  --faint: oklch(0.88 0.005 260);
+  --line: oklch(0.87 0.005 260);
+  --accent: oklch(0.55 0.145 65);
+  --accent-soft: oklch(0.55 0.145 65 / 12%);
+  --code-bg: oklch(0.955 0.003 90);
+}
+
+.dark {
+  --background: oklch(0.165 0.006 265);
+  --surface: oklch(0.205 0.007 265);
+  --surface-raised: oklch(0.24 0.008 265);
+  --foreground: oklch(0.93 0.004 90);
+  --muted: oklch(0.68 0.012 260);
+  --faint: oklch(0.32 0.008 265);
+  --line: oklch(0.28 0.008 265);
+  --accent: oklch(0.8 0.14 78);
+  --accent-soft: oklch(0.8 0.14 78 / 10%);
+  --code-bg: oklch(0.19 0.006 265);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+  @media (prefers-reduced-motion: reduce) {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--background);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* MPA-style cross-fade for browsers that support it; harmless elsewhere. */
+@view-transition {
+  navigation: auto;
+}
+
+/* Subtle film grain over the whole page. */
+.grain::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Gradient mesh backdrop for hero sections. */
+.mesh {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.mesh::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 60%;
+  height: 80%;
+  border-radius: 100%;
+  background: radial-gradient(ellipse at center, var(--accent-soft), transparent 65%);
+  filter: blur(40px);
+}
+
+/* Prose defaults for MDX case studies. */
+.prose {
+  max-width: 72ch;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+.prose h2 {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 3rem 0 1rem;
+}
+.prose h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 2.25rem 0 0.75rem;
+}
+.prose p {
+  margin: 1.1rem 0;
+  color: var(--muted);
+}
+.prose li {
+  color: var(--muted);
+}
+.prose strong {
+  color: var(--foreground);
+  font-weight: 600;
+}
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose ul {
+  list-style: disc;
+  padding-left: 1.4rem;
+  margin: 1.1rem 0;
+}
+.prose ol {
+  list-style: decimal;
+  padding-left: 1.4rem;
+  margin: 1.1rem 0;
+}
+.prose li {
+  margin: 0.4rem 0;
+}
+.prose blockquote {
+  border-left: 2px solid var(--accent);
+  padding-left: 1.25rem;
+  font-style: italic;
+  margin: 1.5rem 0;
+}
+.prose table {
+  width: 100%;
+  font-size: 0.9rem;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+.prose th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+.prose td {
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+}
+.prose code:not(pre code) {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--code-bg);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+}
+.prose pre {
+  background: var(--code-bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  font-size: 0.85rem;
+  line-height: 1.65;
+}
+.prose pre code {
+  font-family: var(--font-mono);
+  display: grid;
+}
+.prose figcaption[data-rehype-pretty-code-title] {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--code-bg);
+  border: 1px solid var(--line);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  padding: 0.5rem 1.25rem;
+  margin-top: 1.5rem;
+}
+.prose figcaption[data-rehype-pretty-code-title] + pre {
+  margin-top: 0;
+  border-radius: 0 0 10px 10px;
+}
+
+/* Shiki dual-theme: dark theme wins under .dark */
+.prose code[data-theme*=' '] span {
+  color: var(--shiki-light);
+}
+.dark .prose code[data-theme*=' '] span {
+  color: var(--shiki-dark);
+}
