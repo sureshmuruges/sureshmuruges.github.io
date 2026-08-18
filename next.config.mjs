@@ -23,11 +23,6 @@ const nextConfig = {
   trailingSlash: true,
   images: { unoptimized: true },
   pageExtensions: ['ts', 'tsx', 'mdx'],
-  experimental: {
-    // Native View Transitions on client-side navigation; the CSS
-    // @view-transition rule in globals.css covers full page loads.
-    viewTransition: true,
-  },
 }
 
 const withMDX = createMDX({
